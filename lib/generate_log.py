@@ -1,19 +1,45 @@
 from datetime import datetime
-import os
+import requests
 
-def generate_log(data):
-    # TODO: Implement log generation logic
 
-    # STEP 1: Validate input
-    # Hint: Check if data is a list
+def fetch_data():
+    """
+    Fetch data from a public API.
+    """
+    response = requests.get(
+        "https://jsonplaceholder.typicode.com/posts/1"
+    )
 
-    # STEP 2: Generate a filename with today's date (e.g., "log_20250408.txt")
-    # Hint: Use datetime.now().strftime("%Y%m%d")
+    if response.status_code == 200:
+        return response.json()
 
-    # STEP 3: Write the log entries to a file using File I/O
-    # Use a with open() block and write each line from the data list
-    # Example: file.write(f"{entry}\n")
+    return {}
 
-    # STEP 4: Print a confirmation message with the filename
 
-    pass
+def write_log(post):
+    """
+    Write log information to a text file.
+    """
+    filename = f"log_{datetime.now().strftime('%Y%m%d')}.txt"
+
+    with open(filename, "w") as file:
+        file.write("=== Automation Tool Log ===\n")
+        file.write(f"Date: {datetime.now()}\n\n")
+
+        file.write("Fetched Post Information\n")
+        file.write("------------------------\n")
+        file.write(f"Title: {post.get('title', 'No title found')}\n")
+        file.write(f"Body: {post.get('body', 'No body found')}\n")
+
+    print(f"Log written to {filename}")
+
+
+if __name__ == "__main__":
+    post = fetch_data()
+
+    print(
+        "Fetched Post Title:",
+        post.get("title", "No title found")
+    )
+
+    write_log(post)
